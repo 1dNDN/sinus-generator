@@ -20,11 +20,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module module1(iCLK, iENABLE, oSIN);
+module module1(iCLK, iENABLE, iRESET, oSIN, oVALID);
     
     input wire iCLK;
     input wire iENABLE;
+    input wire iRESET;
     output reg[7:0] oSIN = 0;
+    output reg oVALID = 1;
     
     reg wea = 0;
     reg[9:0] addra = 10'h01;
@@ -36,14 +38,25 @@ module module1(iCLK, iENABLE, oSIN);
     begin
         if( iENABLE == 1 ) 
         begin
-            if(timeToReset < 960)
+            if(iRESET == 1)
+            begin
+                timeToReset = 0;
+                addra = 10'h01;
+                oSIN = 0;
+            end        
+            else if(timeToReset < 1)
+            begin
+                addra = addra + 1;
+                timeToReset = timeToReset + 1;
+                oSIN = 0;
+            end
+            else if(timeToReset < 961)
             begin
                 timeToReset = timeToReset + 1;
                 addra = addra + 1;
-                #1;
                 oSIN = douta;
             end
-            else if (timeToReset < 10560) //960 + 9600, 2.5*10^-6 s + 25*10^-6 s
+            else if (timeToReset < 9600)
             begin
                 timeToReset = timeToReset + 1;
                 oSIN = 0;

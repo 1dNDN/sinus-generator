@@ -23,15 +23,19 @@
 module testbench();
     reg CLK_DUT = 0;
     reg ENABLE_DUT = 1;
+    reg RESET_DUT = 0;
     
     always #10 CLK_DUT <= ~CLK_DUT;
     
     wire[7:0] sin;
+    wire valid;
     
     module1 module1(
-        CLK_DUT,
-        ENABLE_DUT,
-        sin
+        .iCLK(CLK_DUT),
+        .iENABLE(ENABLE_DUT),
+        .iRESET(RESET_DUT),
+        .oSIN(sin),
+        .oVALID(valid)
     );
     
     initial #15000000 $finish; 
